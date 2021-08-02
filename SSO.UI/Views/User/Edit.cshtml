@@ -1,0 +1,78 @@
+﻿@model SSO.Infrastructure.Business.Model.UserEditModel
+
+<form id="form" asp-controller="User" asp-action="Edit" asp-antiforgery="true">
+    <div id="divEdit">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Dados do Usuário</h6>
+            </div>
+            <div class="card-body">
+                @await Html.PartialAsync("_ValidationSummary")
+                <input asp-for="Id" type="hidden" />
+                <div class="form-row">
+                    <div class="form-group col-xs-12 col-md-4">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-4">
+                        <label asp-for="IdRole" class="control-label"></label>
+                        <select asp-for="IdRole" asp-items="@ViewBag.RoleList" class="form-control"></select>
+                        <span asp-validation-for="IdRole" class="text-danger"></span>
+                    </div>
+                    @if (ViewBag.HasTenants)
+                    {
+                        <div class="form-group col-xs-12 col-md-4" id="divCliente" style="display: none">
+                            <label asp-for="IdTenant" class="control-label"></label>
+                            @Html.DropDownListFor(model => model.IdTenant, new SelectList(Enumerable.Empty<SelectListItem>()), "Selecione", new { @class = "form-control" })
+                            <span asp-validation-for="IdTenant" class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-xs-12 col-md-6">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control-plaintext" readonly />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-6">
+                        <label asp-for="Phone" class="control-label"></label>
+                        <input asp-for="Phone" class="form-control freeText" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Gravar</button>
+                <a href='@Url.Action("Index", "User")' class="btn btn-sm btn-danger"><i class="fa fa-close"></i> Voltar</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#IdRole').on('change', function() {
+                if ($('#IdRole').val() != '') {
+                    $.post(
+                        "@Url.Action("IsTenantRole", "User")",
+                        { "idRole": $("#IdRole").val() },
+                        function (data) {
+                            if (data.ok) {
+                                if (data.isTenantRole) {
+                                    $('#divCliente').show();
+                                    ListarClientes(@Model.IdTenant);
+                                } else {
+                                    $('#divCliente').hide();
+                                    $("#IdTenant").val('');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+            $('#IdRole').trigger('change');
+        });
+    </script>
+}

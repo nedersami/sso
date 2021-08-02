@@ -1,0 +1,107 @@
+﻿@model SSO.Infrastructure.Business.Model.LoginModel
+
+<div class="row" id="divIndexUsuario">
+    <div class="col">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Usuários Cadastrados</h6>
+                <a class="btn btn-sm btn-primary" href='@Url.Action("Create", "User")'><i class="fas fa-fw fa-plus"></i> Cadastrar Novo</a>
+            </div>
+            <div class="card-body table-responsive">
+                <table id="userTable" class="table noDefault">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th class="tableActions"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DataTablesScriptsPartial");}
+    <script type="text/javascript">
+
+        var userTable = null;
+
+        $(document).ready(function () {
+            DrawUserGrid();
+        });
+
+        function DrawUserGrid() {
+
+            userTable = $('#userTable').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetDataUserTable", "User")",
+                    "type": "POST",
+                    "error": function (xhr, error, thrown) {
+                        DisplayAlertOnScreen("divIndexUsuario", "danger", "warning", true, thrown, false);
+                        $('.dataTables_processing').hide();
+                    }
+                },
+                "bDestroy": true,
+                "processing": true,
+                "serverSide": true,
+                "searching": false,
+                "paging": false,
+                "sorting": false,
+                // "aaSorting": [[0, "desc"]],
+                "columnDefs": [
+                    { "targets": 0, "data": "name" },
+                    { "targets": 1, "data": "email" },
+                    { "targets": 2, "data": "role.name" },
+                    {
+                        "targets": 3,
+                        "orderable": false,
+                        "className": "dt-botao-2",
+                        "render": function (row, type, full, meta) {
+
+                            var urlEdit = '@Url.Action("Edit", "User")' + '/'+ full.id;
+                            var btnEdit = "<a class=\"btn btn-circle btn-primary btn-sm\" href=\"" + urlEdit + "\"><i class=\"fas fa-fw fa-edit\"></i></a>";
+                            var btnExclusao = "<button type='submit' class='btn btn-circle btn-danger btn-sm' onclick=\"DeleteUser('" + full.id + "');\"><i class='fas fa-fw fa-trash'></i></button>";
+                            var retorno = btnEdit + btnExclusao;
+                            return retorno;
+                        }
+                    }
+                ]
+            });
+
+        }
+
+        function DeleteUser(id) {
+
+            var result = confirm("Confirma Exclusão?");
+
+            if (result) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Delete", "User")",
+                    data: { "id": id },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.ok) {
+                            userTable.draw();
+                        } else {
+                            $("#divIndexUsuario").prepend('<div id="divMsgError" class="alert alert-danger alert-dismissable fade show"><b>Erro!</b> ' + data.mensagem + '<button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button></div>');
+                        }
+                    },
+                    error: function (data, erro) {
+                        alert("Erro");
+                    },
+                });
+            }
+        }
+
+        @if (ViewBag.Mensagem != null && ViewBag.Mensagem != "")
+        {
+            @:DisplayAlertOnScreen("divIndexUsuario", "success", "check", true, "@Html.Raw(ViewBag.Mensagem)", true);
+        }
+
+    </script>
+}

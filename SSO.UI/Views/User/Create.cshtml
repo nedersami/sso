@@ -1,0 +1,128 @@
+﻿@model SSO.Infrastructure.Business.Model.UserCreateModel
+
+<div class="pad">
+    <div class="alert alert-warning alert-styled-left">
+        <p>
+            ATENÇÃO: A senha deve preencher os requisitos abaixo:
+            <ul>
+                <li>
+                    A senha deve ter pelo menos 8 caracteres
+                </li>
+                <li>
+                    A senha deve ter pelo menos uma minúscula ('a' - 'z')
+                </li>
+                <li>
+                    A senha deve ter pelo menos uma maiúscula ('A' - 'Z')
+                </li>
+                <li>
+                    A senha deve ter pelo menos um dígito ('0' - '9')
+                </li>
+                <li>
+                    A senha deve ter pelo menos um caractere não alfanumérico
+                </li>
+            </ul>
+        </p>
+    </div>
+</div>
+<form id="form" asp-controller="User" asp-action="Create" asp-antiforgery="true">
+    <div id="divCreate">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Dados do Usuário</h6>
+            </div>
+            <div class="card-body">
+                @await Html.PartialAsync("_ValidationSummary")
+                <div class="form-row">
+                    <div class="form-group col-xs-12 col-md-4">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-4">
+                        <label asp-for="IdRole" class="control-label"></label>
+                        <select asp-for="IdRole" asp-items="@ViewBag.RoleList" class="form-control"></select>
+                        <span asp-validation-for="IdRole" class="text-danger"></span>
+                    </div>
+                    @if (ViewBag.HasTenants)
+                    {
+                        <div class="form-group col-xs-12 col-md-4" id="divCliente" style="display: none">
+                            <label asp-for="IdTenant" class="control-label"></label>
+                            @Html.DropDownListFor(model => model.IdTenant, new SelectList(Enumerable.Empty<SelectListItem>()), "Selecione", new { @class = "form-control" })
+                            <span asp-validation-for="IdTenant" class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-xs-12 col-md-6">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control freeText" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-6">
+                        <label asp-for="Phone" class="control-label"></label>
+                        <input asp-for="Phone" class="form-control freeText" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row" id="rowSenha">
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" class="form-control freeText" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-3">
+                        <label asp-for="PasswordConfirmation" class="control-label"></label>
+                        <input asp-for="PasswordConfirmation" class="form-control freeText" type="password" />
+                        <span asp-validation-for="PasswordConfirmation" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> Gravar</button>
+                <a href='@Url.Action("Index", "User")' class="btn btn-sm btn-danger"><i class="fa fa-close"></i> Voltar</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Email").on("blur", function () {
+                if ($("#Email").val() != "") {
+                    $.post(
+                        "@Url.Action("GetExistingEmail", "User")",
+                        { "login": $("#Email").val() },
+                        function (data) {
+                            if (data.ok) {
+                                DisplayAlertOnScreen("divCreate", "warning", "check", true, "Este Email já está cadastrado no sistema.", true);
+                                $("#Email").val("");
+                                $("#Email").focus();
+                            }
+                        }
+                    );
+                }
+            });
+            $('#IdRole').on('change', function() {
+                if ($('#IdRole').val() != '') {
+                    $.post(
+                        "@Url.Action("IsTenantRole", "User")",
+                        { "idRole": $("#IdRole").val() },
+                        function (data) {
+                            if (data.ok) {
+                                if (data.isTenantRole) {
+                                    $('#divCliente').show();
+                                    ListarClientes();
+                                } else {
+                                    $('#divCliente').hide();
+                                    $("#IdTenant").val('');
+                                }
+                            }
+                        }
+                    );
+                }
+        });
+
+    </script>
+}

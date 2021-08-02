@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "/Views/Shared/_LogonLayout.cshtml";
+}
+
+<div class="text-center">
+    <h2 class="danger">Você não possui acesso a página que tentou acessar, por gentileza entre em contato com o Administrador.</h2>
+    <br />
+    <hr />
+    <br />
+    <div class="small">Você será redirecionado em instantes para página inicial...</div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () { location.href="/Home" }, 5400);
+    });
+
+</script>

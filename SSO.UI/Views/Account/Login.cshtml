@@ -1,0 +1,34 @@
+﻿@model SSO.Infrastructure.Business.Model.LoginModel
+@{
+    Layout = "/Views/Shared/_LogonLayout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="h4 text-gray-900 mb-4">
+        <strong>Bem-vindo(a)</strong>,
+        <br />
+        por gentileza seu login
+    </h1>
+</div>
+@using (Html.BeginForm("Login", "Account", new { returnUrl = "" }, FormMethod.Post, true, new { id = "formLogin", @class = "user" }))
+{
+    <div class="form-group">
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control form-control-user", @placeholder = Html.Raw(Html.DisplayNameFor(n => n.UserName)).ToString() })
+    </div>
+    <div class="form-group">
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-user", @placeholder = Html.Raw(Html.DisplayNameFor(n => n.Password)).ToString() })
+    </div>
+    <div class="form-group">
+        <div class="custom-control custom-checkbox small">
+            @Html.CheckBoxFor(m => m.Rememberme, new { @class = "custom-control-input" })
+            @Html.LabelFor(m => m.Rememberme, Html.Raw(Html.DisplayNameFor(n => n.Rememberme)).ToString(), new { @class="custom-control-label" })
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-user btn-block ">
+        <i class="fa fas fa-user-lock"></i> Acessar
+    </button>
+}
+<br />
+<div class="text-center">
+    @Html.ActionLink("Esqueceu a senha?", "ForgotPassword", "Account", null, new { @class = "small" })
+</div>
