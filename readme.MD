@@ -130,7 +130,7 @@ The tool uses SB Adimin 2 as a default template (https://blackrockdigital.github
 It is possible to create new screens and completely change their behavior. Just copy the Views from our library into your project's Shared folder and customize as needed.
 
 
-graph LR
-  db1[(DB 1)] & dbn[(DB n)]
-  db1 & dbn ----> microservice(redshift convertion)
-  microservice ----> redshift[(redshift)]
+graph LR/n
+  db1[(DB 1)] & dbn[(DB n)]/n
+  db1 & dbn ----> microservice(redshift convertion)/n
+  microservice ----> redshift[(redshift)]/n
