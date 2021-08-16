@@ -18,23 +18,6 @@ Library for using access control in an ASP.NET Core Web API application
 
 This project was created to be turned into a nuget package and published to an internal repository.
 
-If you prefer to use the nuget.config file, here is an example:
-
-```
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <packageSources>
-    <add key="FornaxLibraries" value="https://pkgs.dev.azure.com/fornax/Fornax.Libraries/_packaging/Fornax.Libraries/nuget/v3/index.json" />
-  </packageSources>
-  <packageSourceCredentials>
-    <FornaxLibraries>
-      <add key="Username" value="YOUR FORNAX TFS LOGIN" />
-      <add key="ClearTextPassword" value="YOUR ACCESS TOKEN" />
-    </FornaxLibraries>
-  </packageSourceCredentials>
-</configuration>
-```
-
 ## Settings
 
 1. Configure Startup.cs
@@ -108,15 +91,15 @@ return new DbContextOptionsBuilder<T>()
 
 ```
 "SettingConfiguration": {
-    "SecretKey": "weo9g7ghw9hg39fh3o948hfw4egfdjh",
+    "SecretKey": "esikgt4578ah3oag4r89w37hgow39",
     "UrlDefaultApp": "https://localhost:44389/",
-    "ApplicationName": "Contech",
+    "ApplicationName": "YourClientApp",
     "SMTP_Host": "smtp.gmail.com",
     "SMTP_Port": "587",
-    "SMTP_User": "sigporto@fornax.com.br",
-    "SMTP_Pass": "sigport",
-    "SMTP_From": "fxclinic@fornax.com.br",
-    "SMTP_From_Alias": "FX Clinic"
+    "SMTP_User": "no-reply@yourclient.com",
+    "SMTP_Pass": "test",
+    "SMTP_From": "no-reply@yourclient.com",
+    "SMTP_From_Alias": "Your Client"
   }
 ````
 
@@ -145,3 +128,9 @@ The tool uses SB Adimin 2 as a default template (https://blackrockdigital.github
 2. New screens
 
 It is possible to create new screens and completely change their behavior. Just copy the Views from our library into your project's Shared folder and customize as needed.
+
+
+graph LR
+  db1[(DB 1)] & dbn[(DB n)]
+  db1 & dbn ----> microservice(redshift convertion)
+  microservice ----> redshift[(redshift)]
