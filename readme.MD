@@ -131,6 +131,6 @@ It is possible to create new screens and completely change their behavior. Just 
 
 
 graph LR<br/>
-  db1[(DB 1)] & dbn[(DB n)]<br/>
-  db1 & dbn ----> microservice(redshift convertion)<br/>
-  microservice <--> redshift[(redshift)]
+&nbsp;&nbsp;db1[(DB 1)] & dbn[(DB n)]<br/>
+&nbsp;&nbsp;db1 & dbn ----> microservice(redshift convertion)<br/>
+&nbsp;&nbsp;microservice <--> redshift[(redshift)]
