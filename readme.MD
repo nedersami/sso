@@ -130,13 +130,4 @@ The tool uses SB Adimin 2 as a default template (https://blackrockdigital.github
 It is possible to create new screens and completely change their behavior. Just copy the Views from our library into your project's Shared folder and customize as needed.
 
 
-graph LR
-  ms1(Microservice 1) & msn(Microservice n) --> db1[(DB 1)] & dbn[(DB n)]
-  db1 & dbn ----> dez(debezium)
-  subgraph datapipeline
-    dez --> tt1[[table topic 1]] & ttn[[table topic n]]
-    tt1 & ttn --> funnel(funnel)
-    funnel --> firehose[[firehose topic]]
-    firehose --> warehouse(warehouse)
-    warehouse <--> redshift[(redshift)]
-  end
+graph LRdb1[(DB 1)] & dbn[(DB n)]db1 & dbn ----> microservice(redshift convertion)microservice <--> redshift[(redshift)]
